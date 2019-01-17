@@ -13,6 +13,7 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'Click>=7.0',
+    'click_completion',
 ]
 
 setup_requirements = [
@@ -52,6 +53,7 @@ setup(
     entry_points={
         'console_scripts': [
             'dotfiles=dotfiles.cli:main',
+            'check=dotfiles.check:main',
         ],
     },
     extras_require={

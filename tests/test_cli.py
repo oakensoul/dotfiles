@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `dotfiles` package."""
+"""Tests for `cli` command."""
 
 
 import unittest
@@ -10,8 +10,7 @@ from click.testing import CliRunner
 from dotfiles import cli
 
 
-class TestDotfiles(unittest.TestCase):
-    """Tests for `dotfiles` package."""
+class TestCliCommand(unittest.TestCase):
 
     def setUp(self):
         self.runner = CliRunner()
@@ -24,7 +23,7 @@ class TestDotfiles(unittest.TestCase):
         return self.runner.invoke(cli.main, args)
 
     def test_cli_main(self):
-        """Test the CLI."""
+        """Test the cli commands."""
         result = self.invoke([])
         assert result.exit_code == 0
         assert 'Usage' in result.output
