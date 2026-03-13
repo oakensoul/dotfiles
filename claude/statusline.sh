@@ -3,7 +3,7 @@
 # statusline.sh — Claude Code custom status line
 #
 # Reads JSON from stdin, outputs a formatted single-line status.
-# Format: repo | user | branch | S:n U:n ?:n | model | ctx: N% | $X.XX
+# Format: repo | user | branch | S:n U:n ?:n | aida | model | ctx: N% | $X.XX
 #
 # Requires: jq (installed via brew if missing)
 #
@@ -63,6 +63,19 @@ if [[ -n "$cwd" ]] && [[ -d "$cwd" ]]; then
     fi
 else
     repo_name="unknown"
+fi
+
+# ---------------------------------------------------------------------------
+# AIDA: check for project configuration
+# ---------------------------------------------------------------------------
+aida_status=""
+project_dir="$(echo "$json" | jq -r '.workspace.project_dir // empty' 2>/dev/null)"
+# Try project_dir first, fall back to git root, fall back to cwd
+aida_check_dir="${project_dir:-${repo_root:-$cwd}}"
+if [[ -n "$aida_check_dir" ]] && [[ -f "$aida_check_dir/.claude/aida-project-context.yml" ]]; then
+    aida_status="${GREEN}aida \xe2\x9c\x93${RESET}"
+else
+    aida_status="${RED}aida \xe2\x9c\x97${RESET}"
 fi
 
 # ---------------------------------------------------------------------------
@@ -146,6 +159,9 @@ git_counts="${git_counts% }"
 if [[ -n "$git_counts" ]]; then
     parts+=("${YELLOW}${git_counts}${RESET}")
 fi
+
+# AIDA status
+parts+=("$aida_status")
 
 # Model — white
 parts+=("${WHITE}${model}${RESET}")
