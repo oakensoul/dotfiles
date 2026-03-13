@@ -72,8 +72,14 @@ aida_status=""
 project_dir="$(echo "$json" | jq -r '.workspace.project_dir // empty' 2>/dev/null)"
 # Try project_dir first, fall back to git root, fall back to cwd
 aida_check_dir="${project_dir:-${repo_root:-$cwd}}"
-if [[ -n "$aida_check_dir" ]] && [[ -f "$aida_check_dir/.claude/aida-project-context.yml" ]]; then
-    aida_status="${GREEN}aida \xe2\x9c\x93${RESET}"
+aida_config="$aida_check_dir/.claude/aida-project-context.yml"
+if [[ -n "$aida_check_dir" ]] && [[ -f "$aida_config" ]]; then
+    aida_ver="$(grep -m1 '^version:' "$aida_config" 2>/dev/null | sed 's/^version:[[:space:]]*//' | tr -d "\"'")"
+    if [[ -n "$aida_ver" ]]; then
+        aida_status="${GREEN}aida \xe2\x9c\x93 ${aida_ver}${RESET}"
+    else
+        aida_status="${GREEN}aida \xe2\x9c\x93${RESET}"
+    fi
 else
     aida_status="${RED}aida \xe2\x9c\x97${RESET}"
 fi
