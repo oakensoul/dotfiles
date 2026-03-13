@@ -3,7 +3,7 @@
 # statusline.sh — Claude Code custom status line
 #
 # Reads JSON from stdin, outputs a formatted single-line status.
-# Format: repo | branch | S:n U:n ?:n | model | ctx: N% | $X.XX
+# Format: repo | user | branch | S:n U:n ?:n | model | ctx: N% | $X.XX
 #
 # Requires: jq (installed via brew if missing)
 #
@@ -28,6 +28,7 @@ GREEN='\033[32m'
 YELLOW='\033[33m'
 RED='\033[31m'
 WHITE='\033[37m'
+MAGENTA='\033[35m'
 RESET='\033[0m'
 
 # ---------------------------------------------------------------------------
@@ -37,6 +38,7 @@ RESET='\033[0m'
 cwd="$(echo "$json" | jq -r '.cwd // .workspace.current_dir // empty' 2>/dev/null)"
 
 repo_name=""
+git_username=""
 branch=""
 staged=0
 unstaged=0
@@ -48,6 +50,7 @@ if [[ -n "$cwd" ]] && [[ -d "$cwd" ]]; then
     if [[ -n "$repo_root" ]]; then
         repo_name="$(basename "$repo_root")"
         branch="$(git -C "$cwd" symbolic-ref --short HEAD 2>/dev/null || git -C "$cwd" rev-parse --short HEAD 2>/dev/null)"
+        git_username="$(git -C "$cwd" config user.username 2>/dev/null)"
 
         # Staged count
         staged="$(git -C "$cwd" diff --cached --numstat 2>/dev/null | wc -l | tr -d ' ')"
@@ -123,6 +126,11 @@ parts=()
 
 # Repo name — cyan
 parts+=("${CYAN}${repo_name}${RESET}")
+
+# GitHub username — magenta (omit if not set)
+if [[ -n "$git_username" ]]; then
+    parts+=("${MAGENTA}${git_username}${RESET}")
+fi
 
 # Branch — green (only if in a git repo)
 if [[ -n "$branch" ]]; then
