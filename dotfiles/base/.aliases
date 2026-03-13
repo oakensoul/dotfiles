@@ -1,0 +1,56 @@
+# ~/.aliases — Loadout base aliases
+# Managed by Loadout. Extend via ~/.zshrc.local or ~/.zshrc.d/*.zsh
+
+# ---------------------------------------------------------------------------
+# Navigation
+# ---------------------------------------------------------------------------
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+# ---------------------------------------------------------------------------
+# eza (modern ls replacement)
+# ---------------------------------------------------------------------------
+if command -v eza >/dev/null 2>&1; then
+    alias ls='eza'
+    alias ll='eza -l --git'
+    alias la='eza -la --git'
+    alias lt='eza --tree --level=2'
+else
+    alias ll='ls -lh'
+    alias la='ls -lah'
+fi
+
+# ---------------------------------------------------------------------------
+# bat (modern cat replacement)
+# ---------------------------------------------------------------------------
+if command -v bat >/dev/null 2>&1; then
+    alias cat='bat --paging=never'
+fi
+
+# ---------------------------------------------------------------------------
+# Git shortcuts
+# ---------------------------------------------------------------------------
+alias g='git'
+alias gs='git status'
+alias gd='git diff'
+alias gl='git log --oneline --graph --decorate -20'
+alias gp='git pull'
+alias gco='git checkout'
+alias gcb='git checkout -b'
+alias gc='git commit'
+alias gca='git commit --amend --no-edit'
+alias gps='git push'
+
+# ---------------------------------------------------------------------------
+# Safety
+# ---------------------------------------------------------------------------
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# ---------------------------------------------------------------------------
+# Misc
+# ---------------------------------------------------------------------------
+alias reload='source ~/.zshrc'
+alias path='echo $PATH | tr ":" "\n"'
