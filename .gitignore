@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+*.whl
+.venv/
+venv/
+env/
+
+# Shell
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Cursor
+.cursor/
+
+# JetBrains (PyCharm, WebStorm, IntelliJ, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# iTerm2
+iterm2/DynamicProfiles/
+
+# Vim / Neovim
+*.swp
+*.swo
+*~
+.netrwhist
+tags
+
+# Environment / secrets (safety net)
+.env
+.env.*
+!.env.example
