@@ -1,101 +1,77 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Repository Overview
 
-This is a **public dotfiles repository** containing configuration templates and base setups for macOS. It is part of a three-repository system:
-
-1. **`claude-personal-assistant`** - Public AIDE framework (core AI assistant system)
-2. **`dotfiles`** (this repo) - Public configuration templates
-3. **`dotfiles-private`** - Private configurations (not in this repo)
-
-The repository uses **GNU Stow** for symlink-based installation, allowing packages to be selectively installed and easily managed.
+**Loadout** — a layered macOS machine configuration system. This is the public base layer containing configuration templates, bootstrap scripts, and system defaults. No personal information, no org-specific content.
 
 ## Architecture
 
-### Stow Package System
+### Layer System
 
-The repository is organized as Stow packages - each subdirectory represents a package that can be independently installed:
+Loadout uses a three-layer merge model (only the base layer lives here):
 
-- **shell/** - Zsh configuration (`.zshrc` sources `.zshrc.local` for private configs)
-- **git/** - Git configuration template (`.gitconfig`, `.gitignore_global`)
-- **aide/** - AIDE configuration templates (`CLAUDE.md.template`, `.claude/` templates)
-- **scripts/** - Utility scripts in `bin/` subdirectory
-- **vim/** - Vim configuration (`.vimrc`)
+1. **Base** (this repo) — universal macOS defaults
+2. **Org** — team/company configs (separate repo)
+3. **Private** — personal identity and secrets (separate repo)
 
-**Critical Design Pattern**: Public configs use templates and source private overrides when available. The `.zshrc` sources `.zshrc.local` for private configurations that should never be committed to this public repo.
+Merge strategy: shell concatenation, gitconfig `[include]`, JSON deep merge via `jq`.
 
-### Installation Flow
+### Directory Layout
 
-1. User runs `stow <package>` from the repository root
-2. Stow creates symlinks from `~/<file>` → `~/dotfiles/<package>/<file>`
-3. Private configs from `dotfiles-private` can be stowed afterward to override public templates
+- **bootstrap/** — Installation scripts (`install-base.sh`, `install-user.sh`, `install-devbox.sh`)
+- **brewfiles/** — Homebrew bundle files (`Brewfile.base`, `Brewfile.devbox`)
+- **globals/** — Global runtime installers (`globals.base.sh`, `globals.devbox.sh`)
+- **dotfiles/base/** — Core dotfiles (`.zshrc`, `.gitconfig`, `.aliases`)
+- **dotfiles/devbox/** — Developer overlay (`50-devbox.zsh` for `~/.zshrc.d/`)
+- **claude/** — Claude Code config templates and MCP configs
+- **macos/** — System defaults scripts and power management
+- **iterm2/** — iTerm2 Dynamic Profile generator (Python, stdlib only)
+- **test/** — Validation script and CI workflow
+- **webapps/, slack/, canvas/** — Placeholder directories for future configs
+
+### Key Design Patterns
+
+- **Idempotent scripts** — all `.sh` files use `command -v` guards, check before acting
+- **No symlinks** — files are copied to `~/`; future `loadout build` merges layers
+- **Overlay hooks** — `~/.zshrc.local`, `~/.zshrc.d/*.zsh` (numeric prefix ordering), `~/.gitconfig.local`, `~/.gitconfig.d/`
+- **State directory** — `~/.loadout/` holds `backups/`, `logs/`, future `manifest.json`
+- **nvm via curl** (not Homebrew), **pyenv via Homebrew**, profile suppression with `PROFILE=/dev/null`
+- **1Password CLI** (`op`) for secrets, SSH via 1Password SSH agent
+- **pmset** for power management (not deprecated systemsetup)
 
 ## Common Commands
 
-### Package Management
-
 ```bash
-# Install all packages
-cd ~/dotfiles && stow */
+# Bootstrap a new machine
+./bootstrap/install-base.sh
+./bootstrap/install-user.sh
+./bootstrap/install-devbox.sh    # optional
 
-# Install specific package
-stow shell    # Install shell configs only
-stow git      # Install git config only
+# Run validation
+./test/validate.sh
 
-# Remove package
-stow -D vim   # Remove vim symlinks
-```
-
-### Development Workflow
-
-```bash
-# Edit configs (edits through symlinks back to repo)
-vim ~/.zshrc          # Edits ~/dotfiles/shell/.zshrc
-
-# Commit changes
-cd ~/dotfiles
-git add <package>/<file>
-git commit -m "Updated <package> config"
-git push
-```
-
-### New Machine Setup
-
-```bash
-# 1. Install prerequisites
-brew install stow git
-
-# 2. Clone and install dotfiles
-git clone <repo-url> ~/dotfiles
-cd ~/dotfiles && stow */
-
-# 3. Customize templates
-vim ~/.gitconfig  # Replace placeholders
+# Generate iTerm2 profile
+python3 iterm2/generate-profile.py --name "My Profile" --output ~/Library/Application\ Support/iTerm2/DynamicProfiles/profile.json
 ```
 
 ## Important Constraints
 
-### Public vs Private
+### Public Repository Rules
 
-**NEVER commit to this repository**:
+**NEVER commit**:
 - API keys, tokens, or secrets
 - Personal email addresses or identifiers
-- Machine-specific paths or configurations
-- Private aliases or workflows
+- Machine-specific paths (no `/Users/username/`)
+- Organization-specific configurations
 
-**Use `.zshrc.local` or `dotfiles-private` repo instead** for sensitive/private configurations.
+### Script Standards
 
-### Template Pattern
+- All `.sh` files must have `#!/usr/bin/env bash` shebang
+- All `.py` files must have `#!/usr/bin/env python3` shebang
+- All scripts must be executable (`chmod +x`)
+- All scripts must pass `shellcheck --severity=warning`
+- No `>>` appends without guards, no `mkdir` without `-p`
 
-Files ending in `.template` are meant to be copied and customized:
-- `CLAUDE.md.template` → copy to `~/CLAUDE.md` and customize
-- `.claude/knowledge/*.template` → populate with personal information
+### Testing
 
-### Stow Requirements
-
-When creating new packages:
-- Files must be inside a package directory (e.g., `newpackage/.config/tool/config`)
-- Stow will recreate the directory structure from the package folder to `~/`
-- Ensure no conflicts with existing files before stowing
+`test/validate.sh` runs 10 checks — shellcheck, JSON/plist validation, secrets scan, path scan, idempotency checks. CI runs on every push/PR via `.github/workflows/validate.yml`.
