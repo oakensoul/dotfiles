@@ -73,10 +73,21 @@ project_dir="$(echo "$json" | jq -r '.workspace.project_dir // empty' 2>/dev/nul
 # Try project_dir first, fall back to git root, fall back to cwd
 aida_check_dir="${project_dir:-${repo_root:-$cwd}}"
 aida_config="$aida_check_dir/.claude/aida-project-context.yml"
+aida_marketplace="$HOME/.claude/plugins/marketplaces/aida/.claude-plugin/marketplace.json"
 if [[ -n "$aida_check_dir" ]] && [[ -f "$aida_config" ]]; then
     aida_ver="$(grep -m1 '^version:' "$aida_config" 2>/dev/null | sed 's/^version:[[:space:]]*//' | tr -d "\"'")"
+    # Get installed plugin version for comparison
+    aida_installed=""
+    if [[ -f "$aida_marketplace" ]]; then
+        aida_installed="$(jq -r '.plugins[] | select(.name=="aida-core") | .version // empty' "$aida_marketplace" 2>/dev/null)"
+    fi
     if [[ -n "$aida_ver" ]]; then
-        aida_status="${GREEN}aida \xe2\x9c\x93 ${aida_ver}${RESET}"
+        if [[ -n "$aida_installed" ]] && [[ "$aida_ver" != "$aida_installed" ]]; then
+            # Version mismatch — yellow with installed version hint
+            aida_status="${YELLOW}aida \xe2\x9a\xa0 ${aida_ver} \xe2\x86\x92 ${aida_installed}${RESET}"
+        else
+            aida_status="${GREEN}aida \xe2\x9c\x93 ${aida_ver}${RESET}"
+        fi
     else
         aida_status="${GREEN}aida \xe2\x9c\x93${RESET}"
     fi
