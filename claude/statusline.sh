@@ -75,16 +75,21 @@ aida_check_dir="${project_dir:-${repo_root:-$cwd}}"
 aida_config="$aida_check_dir/.claude/aida-project-context.yml"
 aida_marketplace="$HOME/.claude/plugins/marketplaces/aida/.claude-plugin/marketplace.json"
 if [[ -n "$aida_check_dir" ]] && [[ -f "$aida_config" ]]; then
-    aida_ver="$(grep -m1 '^version:' "$aida_config" 2>/dev/null | sed 's/^version:[[:space:]]*//' | tr -d "\"'")"
-    # Get installed plugin version for comparison
-    aida_installed=""
+    # Get the installed plugin version from installed_plugins.json
+    aida_installed_plugins="$HOME/.claude/plugins/installed_plugins.json"
+    aida_ver=""
+    if [[ -f "$aida_installed_plugins" ]]; then
+        aida_ver="$(jq -r '.plugins["aida-core@aida"][]? | .version // empty' "$aida_installed_plugins" 2>/dev/null)"
+    fi
+    # Get marketplace (latest available) version for comparison
+    aida_latest=""
     if [[ -f "$aida_marketplace" ]]; then
-        aida_installed="$(jq -r '.plugins[] | select(.name=="aida-core") | .version // empty' "$aida_marketplace" 2>/dev/null)"
+        aida_latest="$(jq -r '.plugins[] | select(.name=="aida-core") | .version // empty' "$aida_marketplace" 2>/dev/null)"
     fi
     if [[ -n "$aida_ver" ]]; then
-        if [[ -n "$aida_installed" ]] && [[ "$aida_ver" != "$aida_installed" ]]; then
-            # Version mismatch — yellow with installed version hint
-            aida_status="${YELLOW}aida \xe2\x9a\xa0 ${aida_ver} \xe2\x86\x92 ${aida_installed}${RESET}"
+        if [[ -n "$aida_latest" ]] && [[ "$aida_ver" != "$aida_latest" ]]; then
+            # Update available — yellow with upgrade hint
+            aida_status="${YELLOW}aida \xe2\x9a\xa0 ${aida_ver} \xe2\x86\x92 ${aida_latest}${RESET}"
         else
             aida_status="${GREEN}aida \xe2\x9c\x93 ${aida_ver}${RESET}"
         fi
