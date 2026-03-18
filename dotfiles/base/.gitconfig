@@ -1,0 +1,45 @@
+# ~/.gitconfig — Loadout base git configuration
+# Managed by Loadout. Identity goes in ~/.gitconfig.local
+
+[core]
+    excludesFile = ~/.gitignore_global
+    editor = vim
+    autocrlf = input
+    pager = less -FRX
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = true
+
+[push]
+    default = current
+    autoSetupRemote = true
+
+[fetch]
+    prune = true
+
+[diff]
+    algorithm = histogram
+
+[merge]
+    conflictStyle = zdiff3
+
+[rebase]
+    autoSquash = true
+    autoStash = true
+
+[alias]
+    st = status
+    co = checkout
+    br = branch
+    ci = commit
+    lg = log --oneline --graph --decorate --all
+    unstage = reset HEAD --
+    last = log -1 HEAD
+    amend = commit --amend --no-edit
+
+[include]
+    path = ~/.gitconfig.local
+    path = ~/.gitconfig.d/org.gitconfig

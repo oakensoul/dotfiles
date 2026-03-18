@@ -1,255 +1,92 @@
-# My Dotfiles
+# Loadout
 
-Personal configuration files and templates for macOS, featuring AIDE integration (Claude personal assistant system).
+A layered macOS machine configuration system. This is the **public base layer** — no personal information, no organization-specific content.
 
 ## Overview
 
-**This is my PUBLIC DOTFILES repository** - configuration templates and base setups that others can learn from and adapt.
+Loadout replaces traditional symlink-based dotfiles with a **layered merge system**:
 
-### The Three-Repo System
+- **Base layer** (this repo) — sensible defaults for any macOS machine
+- **Org layer** — team/company tools, standards, and configs
+- **Private layer** — personal identity, secrets, API keys
 
-This is part of my complete development environment:
+Each layer extends and overrides the one below it. Shell configs concatenate, gitconfigs use `[include]`, JSON merges deeply via `jq`.
 
-1. **`claude-personal-assistant`** - Public AIDE framework
-    - Core system that powers my AI assistant
-    - [github.com/you/claude-personal-assistant](https://github.com/you/claude-personal-assistant)
+## Quick Start
 
-2. **`dotfiles`** (this repo) - Public configuration templates
-    - Base shell configs, git setup, AIDE templates
-    - Generic scripts and workflows
-    - Safe to share publicly
+```bash
+# 1. Clone
+git clone https://github.com/oakensoul/dotfiles.git ~/dotfiles
+cd ~/dotfiles
 
-3. **`dotfiles-private`** - Private configurations
-    - My actual secrets and personal configs
-    - Overrides these templates
-    - Not publicly accessible
+# 2. Bootstrap base tools (Xcode CLI, Homebrew, core packages)
+./bootstrap/install-base.sh
 
-## Philosophy
+# 3. Install base dotfiles
+./bootstrap/install-user.sh
 
-These dotfiles serve as a **base layer** that can be extended with private configurations. Public configs use templates and source private overrides when available.
-
-Managed with **GNU Stow** for clean, organized, symlink-based installation.
+# 4. (Optional) Install dev tools
+./bootstrap/install-devbox.sh
+```
 
 ## Structure
 
 ```
 dotfiles/
-├── shell/
-│   └── .zshrc              # Sources .zshrc.local for private configs
-├── git/
-│   └── .gitconfig          # Template with placeholders
-├── aide/
-│   ├── CLAUDE.md.template  # AIDE configuration template
-│   └── .claude/
-│       └── knowledge/
-│           └── *.template  # Knowledge base templates
-├── scripts/
-│   └── bin/
-│       └── *.sh           # Useful utility scripts
-└── vim/
-    └── .vimrc             # Vim configuration
+├── bootstrap/          # Installation scripts (base, user, devbox)
+├── brewfiles/          # Homebrew bundle files
+├── globals/            # Global language runtimes and tools
+├── dotfiles/           # Shell, git, and alias configs
+│   ├── base/           # Core dotfiles for any machine
+│   └── devbox/         # Developer overlay (zshrc.d drop-in)
+├── claude/             # Claude Code configuration templates
+├── macos/              # macOS system defaults and power management
+├── iterm2/             # iTerm2 profile generation
+├── test/               # Validation and CI
+├── webapps/            # Web app configs (placeholder)
+├── slack/              # Slack configs (placeholder)
+└── canvas/             # Canvas configs (placeholder)
 ```
 
-## Quick Start
+## Design Principles
 
-```bash
-# Clone this repo
-git clone https://github.com/you/dotfiles.git ~/dotfiles
+- **Idempotent** — every script checks before acting, safe to re-run
+- **No symlinks** — files are copied; future `loadout build` will merge layers
+- **Overlay hooks** — `~/.zshrc.local`, `~/.zshrc.d/*.zsh`, `~/.gitconfig.local`, `~/.gitconfig.d/`
+- **1Password CLI** (`op`) for secrets management and SSH agent
+- **No personal data** — this repo contains zero identity information
 
-# Install with Stow
-cd ~/dotfiles
-stow */
-
-# Customize the templates
-vim ~/.gitconfig  # Add your name/email
-vim ~/CLAUDE.md   # Configure AIDE
-
-# Create private overrides
-echo "export API_KEY=secret" > ~/.zshrc.local
-```
-
-## Installation
-
-### Prerequisites
-
-```bash
-# Install Stow
-brew install stow
-
-# Install AIDE framework
-git clone https://github.com/you/claude-personal-assistant.git ~/.aide
-cd ~/.aide && ./install.sh
-```
-
-### Install All Packages
-
-```bash
-cd ~/dotfiles
-stow */
-```
-
-### Install Specific Packages
-
-```bash
-cd ~/dotfiles
-stow shell    # Install shell configs
-stow git      # Install git config
-stow aide     # Install AIDE templates
-stow scripts  # Install utility scripts
-```
-
-## Packages
+## Overlay System
 
 ### Shell
-- `.zshrc` - Zsh configuration
-- Sources `.zshrc.local` for private configurations
-- Generic aliases and PATH setup
+- `~/.zshrc` — base shell config
+- `~/.zshrc.d/*.zsh` — numbered drop-ins (10-* org, 50-* devbox, 90-* private)
+- `~/.zshrc.local` — final private overrides (sourced last)
 
 ### Git
-- `.gitconfig` - Git configuration template
-- `.gitignore_global` - Global gitignore patterns
-- Replace placeholders with your information
+- `~/.gitconfig` — base git config (no `[user]` section)
+- `~/.gitconfig.d/` — include directory for org/team configs
+- `~/.gitconfig.local` — private identity and overrides
 
-### AIDE
-- `CLAUDE.md.template` - AIDE configuration template
-- `.claude/` templates - Knowledge base structure
-- Integrates with [claude-personal-assistant](https://github.com/you/claude-personal-assistant)
+### State Directory
+- `~/.loadout/` — managed state: `backups/`, `logs/`, future `manifest.json`
 
-### Scripts
-- `bin/` - Utility scripts
-- Generic helpers and tools
-- Nothing machine-specific
+## Bootstrap Scripts
 
-### Vim
-- `.vimrc` - Vim configuration
-- Basic setup, extend as needed
+| Script | What it does |
+|--------|-------------|
+| `install-base.sh` | Xcode CLI tools, Homebrew, Brewfile.base, global runtimes, macOS defaults |
+| `install-user.sh` | Back up existing dotfiles, copy base configs to `~/`, create `~/.loadout/` |
+| `install-devbox.sh` | Brewfile.devbox, dev runtimes, devbox shell overlay, display detection |
 
-## Customization
-
-### Private Overrides
-
-Create a `~/.zshrc.local` file for private configurations:
+## Validation
 
 ```bash
-# ~/.zshrc.local
-export ANTHROPIC_API_KEY="your-key"
-export WORK_EMAIL="you@company.com"
-
-alias work='cd ~/Development/work'
+./test/validate.sh
 ```
 
-This file is sourced by `.zshrc` but never committed.
-
-### AIDE Setup
-
-1. Install AIDE framework: `cd ~/.aide && ./install.sh`
-2. Copy template: `cp ~/CLAUDE.md.template ~/CLAUDE.md`
-3. Customize `~/CLAUDE.md` with your preferences
-4. Populate `~/.claude/knowledge/` with your information
-
-### Extending with Private Repo
-
-Create a `dotfiles-private` repository that stows on top:
-
-```bash
-# Stow public first
-cd ~/dotfiles && stow */
-
-# Stow private second (overrides public)
-cd ~/dotfiles-private && stow */
-```
-
-## Usage
-
-### Update Configs
-
-```bash
-# Edit through symlinks
-vim ~/.zshrc          # Edits ~/dotfiles/shell/.zshrc
-
-# Commit changes
-cd ~/dotfiles
-git add shell/.zshrc
-git commit -m "Updated shell config"
-git push
-```
-
-### Add New Package
-
-```bash
-cd ~/dotfiles
-mkdir newpackage
-# Add files to newpackage/
-stow newpackage
-git add newpackage/
-git commit -m "Added new package"
-```
-
-### Remove Package
-
-```bash
-cd ~/dotfiles
-stow -D vim    # Remove symlinks
-rm -rf vim/    # Remove package
-```
-
-## New Machine Setup
-
-```bash
-# 1. Install Homebrew
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# 2. Install Stow
-brew install stow git
-
-# 3. Clone dotfiles
-git clone https://github.com/you/dotfiles.git ~/dotfiles
-
-# 4. Stow everything
-cd ~/dotfiles && stow */
-
-# 5. Install AIDE
-git clone https://github.com/you/claude-personal-assistant.git ~/.aide
-cd ~/.aide && ./install.sh
-
-# 6. Customize
-vim ~/.gitconfig  # Add your info
-vim ~/CLAUDE.md   # Configure AIDE
-```
-
-## AIDE Integration
-
-This dotfiles repo includes templates for AIDE (Claude personal assistant):
-
-- `aide/CLAUDE.md.template` - Main configuration template
-- `aide/.claude/` - Knowledge base structure
-- Integrates with the [claude-personal-assistant](https://github.com/you/claude-personal-assistant) framework
-
-After stowing, install AIDE and customize the templates.
-
-## Requirements
-
-- macOS (adaptable to Linux)
-- GNU Stow
-- Git
-- Zsh (or adapt to Bash)
+Runs shellcheck, JSON/plist validation, secrets scanning, and portability checks. Also runs in CI on every push and PR.
 
 ## License
 
-MIT License - Feel free to use and adapt!
-
-## Inspiration
-
-- [mathiasbynens/dotfiles](https://github.com/mathiasbynens/dotfiles)
-- [holman/dotfiles](https://github.com/holman/dotfiles)
-- [paulirish/dotfiles](https://github.com/paulirish/dotfiles)
-
-## Links
-
-- AIDE Framework: [claude-personal-assistant](https://github.com/you/claude-personal-assistant)
-- My Blog: [your-blog.com](https://your-blog.com)
-- Twitter: [@yourusername](https://twitter.com/yourusername)
-
----
-
-**These are templates - customize for your own use!**
+AGPL-3.0 — see [LICENSE](LICENSE) for details.

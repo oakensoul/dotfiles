@@ -1,0 +1,17 @@
+# Brewfile.devbox — Developer tools
+# Managed by Loadout
+
+# Development CLI
+brew "gh"
+brew "lazygit"
+brew "shellcheck"
+brew "shfmt"
+
+# Python
+brew "pyenv"
+
+# Containers
+cask "docker"
+
+# Editor
+cask "visual-studio-code"
