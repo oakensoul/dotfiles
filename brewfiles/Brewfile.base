@@ -1,0 +1,21 @@
+# Brewfile.base — Core tools for any macOS machine
+# Managed by Loadout
+
+# Terminal tools
+brew "git"
+brew "curl"
+brew "jq"
+brew "ripgrep"
+brew "fd"
+brew "fzf"
+brew "bat"
+brew "eza"
+brew "zoxide"
+
+# Security
+cask "1password-cli"
+
+# Desktop apps
+cask "iterm2"
+cask "rectangle"
+cask "raycast"
