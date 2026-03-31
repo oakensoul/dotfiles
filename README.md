@@ -21,7 +21,7 @@ Each layer extends and overrides the one below it. Shell configs concatenate, gi
 - **macOS 13 Ventura** or later
 - **Apple ID** (required for Xcode Command Line Tools)
 - **GitHub account**
-- **1Password account** (recommended, for secrets and SSH agent management)
+- **1Password account** (optional — adds convenience for SSH key management, see [Setup Guide](docs/SETUP.md#ssh-key-setup-levels))
 
 ## Quick Start
 
