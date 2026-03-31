@@ -123,7 +123,7 @@ C4Component
 
     Container_Boundary(loadout, "loadout CLI") {
         Component(cli, "CLI Layer", "Click", "Command routing: init, build, update, upgrade, check, globals, display")
-        Component(init, "Init Module", "Python", "12-step bootstrap: Xcode, clone, SSH, brew, globals, claude, macos, canvas config")
+        Component(init, "Init Module", "Python", "13-step bootstrap: Xcode, clone, SSH, brew, globals, claude, macos, canvas config")
         Component(build, "Build Module", "Python", "Three-layer merge pipeline: concat, include, deep merge, replace")
         Component(brew, "Brew Module", "Python", "Homebrew bundle: aggregate Brewfiles, run brew bundle")
         Component(globals, "Globals Module", "Python", "Runtime installers: nvm, pyenv, Claude Code (curl), npm globals, pip globals")
@@ -144,10 +144,10 @@ C4Component
     Rel(cli, display, "loadout display")
     Rel(cli, macos_mod, "loadout init")
     Rel(cli, core, "Delegates operations")
-    Rel(init, build, "Step 7: merge dotfiles")
-    Rel(init, brew, "Step 8: brew bundle")
-    Rel(init, globals, "Step 9: install runtimes")
-    Rel(init, claude_mod, "Step 10: build Claude config")
+    Rel(init, build, "Step 6: merge dotfiles")
+    Rel(init, brew, "Step 7: brew bundle")
+    Rel(init, globals, "Step 8: install runtimes")
+    Rel(init, claude_mod, "Step 9: build Claude config")
     Rel(init, macos_mod, "Step 11: apply defaults")
     Rel(init, display, "Step 12: launch agent")
     Rel(build, config, "Reads merge rules, org list")
@@ -175,38 +175,41 @@ sequenceDiagram
     LO->>macOS: Ensure Xcode CLI Tools (xcode-select --install)
 
     Note over LO: Step 2
-    LO->>GH: git clone oakensoul/dotfiles → ~/.dotfiles
+    LO->>GH: git clone dotfiles + dotfiles-private → ~/.dotfiles, ~/.dotfiles-private
 
     Note over LO: Step 3
-    LO->>GH: git clone oakensoul/dotfiles-private → ~/.dotfiles-private
+    LO->>macOS: ssh-keygen -t ed25519 (empty passphrase)
 
     Note over LO: Step 4
-    LO->>macOS: ssh-keygen -t ed25519
+    LO->>OP: op read (GitHub API token)
+    LO->>GH: gh auth login + gh ssh-key add
 
     Note over LO: Step 5
-    LO->>OP: op read (SSH passphrase)
-    LO->>GH: gh ssh-key add
-
-    Note over LO: Step 6
     LO->>GH: Switch remotes HTTPS → SSH
 
-    Note over LO: Step 7
+    Note over LO: Step 6
     LO->>LO: Build dotfiles (three-layer merge → ~/)
 
-    Note over LO: Step 8
+    Note over LO: Step 7
     LO->>HB: brew bundle (aggregated Brewfiles)
 
-    Note over LO: Step 9
+    Note over LO: Step 8
     LO->>NVM: Install Node.js, Python, Claude Code (curl), npm globals, pip globals
 
-    Note over LO: Step 10
+    Note over LO: Step 9
     LO->>CC: Write mcp.json, CLAUDE.md, provider scripts → ~/.claude/
+
+    Note over LO: Step 10
+    LO->>LO: Bootstrap canvas config → ~/.canvas/config.json
 
     Note over LO: Step 11
     LO->>macOS: defaults write (Dock, Finder, keyboard, trackpad, screenshots, private defaults)
 
     Note over LO: Step 12
     LO->>macOS: Install display-watch launch agent (pmset)
+
+    Note over LO: Step 13
+    LO->>LO: Save config → ~/.dotfiles/.loadout.toml
 ```
 
 ### 4.2 loadout build (Merge Pipeline)
@@ -252,7 +255,7 @@ sequenceDiagram
     participant IT as iTerm2
     participant Priv as dotfiles-private
 
-    Dev->>DB: devbox create --name myproject --org splash
+    Dev->>DB: devbox create --name myproject --org acme-corp
     DB->>Priv: Load preset from devbox/presets/
 
     Note over DB: Compensation stack initialized (rollback on failure)
@@ -284,18 +287,18 @@ sequenceDiagram
     participant CC as Claude Code
     participant IT as iTerm2
 
-    Dev->>CV: canvas new --org splash --name "api refactor"
+    Dev->>CV: canvas new --org acme-corp --name "api refactor"
 
     CV->>CV: Generate slug: 2026-03-30-azure-falcon
     CV->>FS: mkdir ~/.canvas/sessions/2026-03-30-azure-falcon/
 
-    CV->>Priv: Load Jinja2 template from canvas/orgs/splash/CLAUDE.md.tmpl
+    CV->>Priv: Load Jinja2 template from canvas/orgs/acme-corp/CLAUDE.md.tmpl
     CV->>CV: Render CLAUDE.md with org context injection
     CV->>FS: Write CLAUDE.md to session directory
 
     CV->>FS: Update ~/.canvas/registry.json (add session entry)
 
-    CV->>IT: Open in org-specific iTerm2 profile (splash color scheme)
+    CV->>IT: Open in org-specific iTerm2 profile (acme-corp color scheme)
     CV->>CC: Launch Claude Code in session directory
 
     CV-->>Dev: Session ready: ~/.canvas/sessions/2026-03-30-azure-falcon/
@@ -352,7 +355,7 @@ Each tool maintains its own state directory. There are no shared databases — t
 | `~/.dotfiles/.loadout.toml` | loadout | Primary config: user identity, active orgs, tool versions, paths |
 | `~/.dotfiles/build/` | loadout | Merged build output (staging area before copy to `~/`) |
 | `~/.dotfiles/backups/` | loadout | Timestamped backups of files before overwrite |
-| `~/.loadout/` | loadout | Runtime state: `logs/`, `backups/`, timestamps, future `manifest.json` |
+| `~/.loadout/` | loadout | Runtime state: `logs/`, `backups/`, timestamps, `manifest.json` |
 | `~/.devbox/` | devbox | `config.json`, `registry.json` (devbox inventory and settings) |
 | `~/.canvas/` | canvas | `config`, `registry.json` (session inventory), `sessions/` (workspace dirs) |
 | `~/.claude/` | loadout / canvas | `mcp.json`, `CLAUDE.md`, `providers/` (API key scripts) |
@@ -369,17 +372,16 @@ Each tool maintains its own state directory. There are no shared databases — t
 
 ## 7. Multi-Org Model
 
-Loadout supports five organizations, each receiving isolated configuration across every tool.
+Loadout supports multiple organizations, each receiving isolated configuration across every tool. Here are some example org slugs:
 
 ### Supported Organizations
 
 | Org Slug | Purpose |
 |---|---|
 | `personal` | Personal projects and default identity |
-| `splash` | Primary employer |
-| `mythical-journeys` | Side project |
-| `sidequest-syndicate` | Side project collective |
-| `equinox-consulting` | Consulting work |
+| `acme-corp` | Primary employer |
+| `side-project` | Side project |
+| `freelance-client` | Consulting or freelance work |
 
 ### Per-Org Configuration Surface
 
@@ -409,7 +411,7 @@ Loadout supports five organizations, each receiving isolated configuration acros
 |---|---|
 | **Base layer** | The public `dotfiles` repo containing universal macOS defaults. First (lowest priority) merge layer. |
 | **Org layer** | Per-organization configuration in `dotfiles-private`. Overrides the base layer. |
-| **Private layer** | The combination of `dotfiles-private/dotfiles/base/` and org overlays. Higher priority than public base. |
+| **Private layer** | The combination of `dotfiles-private/dotfiles/base/` (private base) and `dotfiles-private/dotfiles/orgs/` (org overlays). In the high-level view this is a single "Private layer"; in the merge pipeline it expands into two distinct priority levels (private base at priority 2, org overlays at priority 3). |
 | **Overlay hook** | A well-known file path (`~/.zshrc.d/`, `~/.gitconfig.d/`, `~/.zshrc.local`) that allows runtime customization without rebuilding. |
 | **Three-layer merge** | The build pipeline that combines public base, private base, and org overlays into final dotfiles. |
 | **Loadout** | Both the ecosystem name and the orchestrator CLI (`oakensoul/loadout`). |
@@ -423,6 +425,6 @@ Loadout supports five organizations, each receiving isolated configuration acros
 | **Atrophy detection** | Health check that identifies devbox environments with no recent activity, candidates for `devbox nuke`. |
 | **`op://` URI** | A 1Password CLI reference (e.g., `op://vault/item/field`) resolved at runtime by `op read`. No secrets are stored in config files. |
 | **Dynamic profile** | An iTerm2 feature where JSON files in `~/Library/Application Support/iTerm2/DynamicProfiles/` are auto-loaded as terminal profiles. |
-| **AIDA** | A future plugin system. All three Python CLIs expose `core.py` stable APIs for AIDA integration. |
+| **AIDA** | A Claude Code plugin system that provides agent, skill, and hook management. The three Python CLIs expose `core.py` stable APIs for AIDA integration. |
 | **`loadout check`** | Health probe command that inspects git status, brew state, stale canvas sessions, devbox heartbeats, and disk space. |
 | **Atomic swap** | The build module writes merged output to a staging directory (`~/.dotfiles/build/`) then copies to `~/`, minimizing the window of inconsistent state. |
