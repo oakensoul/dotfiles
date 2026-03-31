@@ -23,7 +23,7 @@ A step-by-step guide to setting up your macOS machine with the Loadout configura
 
 Loadout takes a fresh macOS machine from factory settings to a fully configured development environment in a single command. It installs your tools, applies your shell and git configuration, sets macOS preferences, and manages updates going forward.
 
-Unlike traditional dotfile managers that symlink files from a single repo, Loadout uses a **layered merge system**. You maintain a public base layer (this repo) with sensible defaults, then overlay private and organization-specific configuration on top. This means you can share your base setup publicly without exposing personal details, and switch between different team contexts cleanly.
+Unlike traditional dotfile managers that symlink files from a single repo, Loadout uses a **layered merge system**. You maintain a public base layer (this repo) with sensible defaults, then overlay private and organization-specific configuration on top. This means you can share your base setup publicly without exposing personal details, and switch between different team contexts cleanly. For a deeper look at the system design, see the [Architecture documentation](architecture/README.md).
 
 ### Prerequisites Checklist
 
@@ -172,7 +172,7 @@ After `loadout init` completes, here is what was created and configured on your 
 - **Homebrew packages** from `Brewfile.base` plus any org-specific Brewfiles
 - **Node.js** via nvm (latest LTS)
 - **Python** via pyenv
-- **Claude Code** (global npm package)
+- **Claude Code** (installed via curl)
 - Any additional global packages defined in your org globals scripts
 
 ### What Got Configured

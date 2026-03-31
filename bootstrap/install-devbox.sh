@@ -3,6 +3,9 @@
 # install-devbox.sh — Install developer tools and overlay
 # Requires: install-base.sh has been run (Homebrew available)
 #
+# Manual alternative to `loadout init`. See docs/SETUP.md for the recommended
+# automated approach.
+#
 
 set -euo pipefail
 
