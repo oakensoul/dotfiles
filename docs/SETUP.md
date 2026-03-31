@@ -32,8 +32,21 @@ Before running the setup, make sure you have:
 - **macOS 13 Ventura or later** — Loadout targets modern macOS. Check your version in Apple menu > About This Mac.
 - **Apple ID** — Required for installing Xcode Command Line Tools. If you are on a managed machine, your IT department may need to allow this.
 - **GitHub account** — Your dotfiles repos are hosted on GitHub. [Create an account](https://github.com/signup) if you do not have one.
-- **1Password account** (recommended) — Loadout uses the 1Password CLI (`op`) for SSH key management and secrets. You can skip this, but you will need to manage SSH keys manually.
+- **1Password account** (optional) — Adds convenience for SSH key management and secrets. See [SSH Key Setup Levels](#ssh-key-setup-levels) below. Not required.
+- **GitHub CLI** (`gh`) (optional) — Enables automatic SSH key registration with GitHub. Installed by default via `Brewfile.base`. Not required.
 - **cookiecutter** — Included automatically when you install loadout. No separate install needed.
+
+### SSH Key Setup Levels
+
+The `loadout init` flow gracefully degrades based on what tools are available. Every level produces a working SSH setup — the optional tools just add convenience.
+
+| Tools Available | What Happens | User Action Required |
+|---|---|---|
+| **1Password CLI + GitHub CLI** | SSH key pulled from 1Password, saved locally, added to macOS keychain, and registered with GitHub automatically. | One-time 1Password authentication prompt. |
+| **GitHub CLI only** | SSH key generated locally. Key registered with GitHub automatically via `gh`. | Authenticate `gh` manually once (e.g., `gh auth login`). |
+| **Neither** | SSH key generated locally. | Register the key manually at [github.com/settings/keys](https://github.com/settings/keys). |
+
+> **Note:** The SSH key provider is configurable. Loadout supports 1Password by default, and the provider interface is extensible for other secret managers (AWS Secrets Manager, HashiCorp Vault, etc.).
 
 ### Fork or Clone?
 
@@ -48,8 +61,8 @@ When you run `loadout init`, the CLI performs a 13-step bootstrap:
 
 1. Ensure Xcode Command Line Tools are installed
 2. Clone dotfiles repos (both `dotfiles` and `dotfiles-private`)
-3. Generate an SSH key pair (with an empty passphrase)
-4. Register the SSH key with GitHub (using 1Password for a GitHub API token)
+3. Set up SSH key (behavior depends on available tools — see [SSH Key Setup Levels](#ssh-key-setup-levels))
+4. Register the SSH key with GitHub (automatic with `gh` CLI, otherwise manual)
 5. Switch git remotes from HTTPS to SSH
 6. Build dotfiles (merge base + private + org layers into `~/`)
 7. Run Homebrew bundle (install all packages from assembled Brewfiles)
@@ -500,7 +513,7 @@ On Intel Macs, the Homebrew prefix is `/usr/local/Homebrew` instead.
 
 ### SSH Key Registration Fails
 
-SSH key registration requires both the 1Password CLI (`op`) and the GitHub CLI (`gh`). If either is missing, `loadout init` will skip this step with a warning. To register manually:
+SSH key registration with GitHub requires the GitHub CLI (`gh`). If `gh` is not available, `loadout init` will skip automatic registration with a warning. To register manually:
 
 ```bash
 # Copy your public key
