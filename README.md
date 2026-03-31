@@ -31,14 +31,15 @@ The recommended way to set up a new machine is with the `loadout` CLI:
 # 1. Install Homebrew (if not already installed)
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# 2. Install loadout
-pip3 install oakensoul-loadout
+# 2. Install loadout (not yet on PyPI — install from source)
+git clone https://github.com/oakensoul/loadout.git ~/.loadout-cli
+pip3 install ~/.loadout-cli
 
 # 3. Bootstrap your machine
 loadout init --user=YOUR_USERNAME --orgs=YOUR_ORG
 ```
 
-This runs a fully automated 12-step bootstrap that clones repos, generates SSH keys, installs packages, builds your dotfiles, and configures macOS defaults.
+This runs a fully automated 13-step bootstrap that clones repos, generates SSH keys, installs packages, builds your dotfiles, and configures macOS defaults.
 
 For the full walkthrough, see the **[Setup Guide](docs/SETUP.md)**.
 
@@ -47,8 +48,8 @@ For the full walkthrough, see the **[Setup Guide](docs/SETUP.md)**.
 If you prefer to run things step by step without the loadout CLI:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/dotfiles.git ~/dotfiles
-cd ~/dotfiles
+git clone https://github.com/YOUR_USERNAME/dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
 
 ./bootstrap/install-base.sh      # Xcode CLI, Homebrew, base packages, macOS defaults
 ./bootstrap/install-user.sh      # Back up existing dotfiles, install base configs

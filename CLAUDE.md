@@ -35,7 +35,7 @@ Merge strategy: shell concatenation, gitconfig `[include]`, JSON deep merge via 
 - **Idempotent scripts** — all `.sh` files use `command -v` guards, check before acting
 - **No symlinks** — files are copied to `~/`; `loadout build` merges layers
 - **Overlay hooks** — `~/.zshrc.local`, `~/.zshrc.d/*.zsh` (numeric prefix ordering), `~/.gitconfig.local`, `~/.gitconfig.d/`
-- **State directory** — `~/.loadout/` holds `backups/`, `logs/`, future `manifest.json`
+- **State directory** — `~/.loadout/` holds `backups/`, `logs/`, `manifest.json`
 - **nvm via curl** (not Homebrew), **pyenv via Homebrew**, profile suppression with `PROFILE=/dev/null`
 - **1Password CLI** (`op`) for secrets, SSH via 1Password SSH agent
 - **pmset** for power management (not deprecated systemsetup)

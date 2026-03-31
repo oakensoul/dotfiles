@@ -43,18 +43,18 @@ You have two options for getting started:
 
 ### What Will Happen
 
-When you run `loadout init`, the CLI performs a 12-step bootstrap:
+When you run `loadout init`, the CLI performs a 13-step bootstrap:
 
 1. Ensure Xcode Command Line Tools are installed
-2. Clone your dotfiles repo (this repo) to `~/.dotfiles`
-3. Clone your dotfiles-private repo to `~/.dotfiles-private`
-4. Generate an SSH key pair
-5. Register the SSH key with GitHub (using 1Password for the passphrase)
-6. Switch git remotes from HTTPS to SSH
-7. Build dotfiles (merge base + private + org layers into `~/`)
-8. Run Homebrew bundle (install all packages from assembled Brewfiles)
-9. Install global runtimes (Node.js via nvm, Python via pyenv, Claude Code)
-10. Build Claude Code configuration (merge MCP configs and CLAUDE.md)
+2. Clone dotfiles repos (both `dotfiles` and `dotfiles-private`)
+3. Generate an SSH key pair (with an empty passphrase)
+4. Register the SSH key with GitHub (using 1Password for a GitHub API token)
+5. Switch git remotes from HTTPS to SSH
+6. Build dotfiles (merge base + private + org layers into `~/`)
+7. Run Homebrew bundle (install all packages from assembled Brewfiles)
+8. Install global runtimes (Node.js via nvm, Python via pyenv, Claude Code)
+9. Build Claude Code configuration (merge MCP configs and CLAUDE.md)
+10. Bootstrap canvas configuration (`~/.canvas/config.json`)
 11. Apply macOS system defaults (Dock, Finder, keyboard, trackpad, screenshots)
 12. Set up display launch agent (auto-detect connected displays and apply power settings)
 13. Save configuration to `~/.dotfiles/.loadout.toml`
@@ -69,7 +69,11 @@ On GitHub, fork this repository to your own account. If you plan to customize th
 
 ### Step 2: Create Your Private Repo
 
-Create a private repository called `dotfiles-private` in your GitHub account. This will hold your personal identity, org-specific configs, and secrets references. The expected structure is:
+Create a private repository called `dotfiles-private` in your GitHub account. This will hold your personal identity, org-specific configs, and secrets references.
+
+> **Note:** If you skip this step, `loadout init` will fail when it tries to clone the missing `dotfiles-private` repo. Either create an empty private repo on GitHub before running init, or use the [manual bootstrap](#manual-bootstrap) approach which only requires the public base layer. You can always create the private repo later and run `loadout build` to merge it in.
+
+The expected structure is:
 
 ```
 dotfiles-private/
@@ -107,8 +111,11 @@ Follow the post-install instructions to add Homebrew to your PATH.
 
 ### Step 4: Install the Loadout CLI
 
+Loadout is not yet published to PyPI. Install it from the GitHub repository:
+
 ```bash
-pip3 install oakensoul-loadout
+git clone https://github.com/oakensoul/loadout.git ~/.loadout-cli
+pip3 install ~/.loadout-cli
 ```
 
 Verify the installation:
@@ -173,6 +180,7 @@ After `loadout init` completes, here is what was created and configured on your 
 - **Node.js** via nvm (latest LTS)
 - **Python** via pyenv
 - **Claude Code** (installed via curl)
+- **Canvas config** at `~/.canvas/config.json` (if canvas is installed and orgs are configured)
 - Any additional global packages defined in your org globals scripts
 
 ### What Got Configured
@@ -385,8 +393,8 @@ If you prefer not to use the loadout CLI, you can run the bootstrap scripts dire
 
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/dotfiles.git ~/dotfiles
-cd ~/dotfiles
+git clone https://github.com/YOUR_USERNAME/dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
 
 # Step 1: Install base tools
 ./bootstrap/install-base.sh
@@ -492,14 +500,15 @@ loadout build
 If things go wrong and you want a clean slate:
 
 ```bash
-# Remove loadout-managed directories
-rm -rf ~/.dotfiles ~/.dotfiles-private ~/.loadout ~/.dotfiles/build
-
-# Restore backed-up dotfiles (if any)
-ls ~/.dotfiles/backups/      # or ~/.loadout/backups/
+# 1. Restore backed-up dotfiles BEFORE deleting anything.
+#    Backups are stored in ~/.loadout/backups/ (the canonical location).
+ls ~/.loadout/backups/
 # Copy desired backup files back to ~/
 
-# Re-run init
+# 2. Remove loadout-managed directories
+rm -rf ~/.dotfiles ~/.dotfiles-private ~/.loadout
+
+# 3. Re-run init
 loadout init --user=YOUR_USERNAME --orgs=YOUR_ORG
 ```
 
@@ -562,6 +571,7 @@ rm -rf ~/.claude
 
 ```bash
 pip3 uninstall oakensoul-loadout
+rm -rf ~/.loadout-cli
 ```
 
 Homebrew packages, nvm, pyenv, and other installed tools will remain on your system. Remove them individually if desired:
