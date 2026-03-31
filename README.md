@@ -31,9 +31,9 @@ The recommended way to set up a new machine is with the `loadout` CLI:
 # 1. Install Homebrew (if not already installed)
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# 2. Install loadout with scaffold support (not yet on PyPI — install from source)
+# 2. Install loadout (not yet on PyPI — install from source)
 git clone https://github.com/oakensoul/loadout.git ~/.loadout-cli
-pip3 install ~/.loadout-cli[scaffold]
+pip3 install ~/.loadout-cli
 
 # 3. Scaffold your private repo (creates ~/.dotfiles-private with correct structure)
 loadout scaffold \

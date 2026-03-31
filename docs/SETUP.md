@@ -33,7 +33,7 @@ Before running the setup, make sure you have:
 - **Apple ID** — Required for installing Xcode Command Line Tools. If you are on a managed machine, your IT department may need to allow this.
 - **GitHub account** — Your dotfiles repos are hosted on GitHub. [Create an account](https://github.com/signup) if you do not have one.
 - **1Password account** (recommended) — Loadout uses the 1Password CLI (`op`) for SSH key management and secrets. You can skip this, but you will need to manage SSH keys manually.
-- **cookiecutter** (optional) — Required if you want to use `loadout scaffold` to generate your private repo. Install it with `pip3 install cookiecutter>=2.0` or use `pip3 install ~/.loadout-cli[scaffold]` when installing loadout.
+- **cookiecutter** — Included automatically when you install loadout. No separate install needed.
 
 ### Fork or Clone?
 
@@ -79,11 +79,6 @@ Your private repo (`dotfiles-private`) holds personal identity, org-specific con
 The `loadout scaffold` command generates a properly structured `dotfiles-private` repo using a cookiecutter template. This is the fastest way to get started.
 
 ```bash
-# If you installed loadout with scaffold support:
-pip3 install ~/.loadout-cli[scaffold]
-# OR install cookiecutter separately:
-pip3 install cookiecutter>=2.0
-
 # Scaffold your private repo
 loadout scaffold \
   --user=YOUR_USERNAME \
