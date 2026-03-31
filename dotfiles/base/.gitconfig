@@ -30,6 +30,9 @@
     autoSquash = true
     autoStash = true
 
+[gpg "ssh"]
+    program = ssh-keygen
+
 [alias]
     st = status
     co = checkout
