@@ -2,7 +2,9 @@
 
 > C4 architecture documentation for the Loadout multi-repo macOS machine configuration system.
 >
-> Version: 0.1.0 | Last updated: 2026-03-30
+> Version: 0.1.0 | Last updated: 2026-03-31
+>
+> For getting started, see the [Setup Guide](../SETUP.md).
 
 ---
 
@@ -121,14 +123,14 @@ C4Component
 
     Container_Boundary(loadout, "loadout CLI") {
         Component(cli, "CLI Layer", "Click", "Command routing: init, build, update, upgrade, check, globals, display")
-        Component(init, "Init Module", "Python", "12-step bootstrap: Xcode, clone, SSH, brew, globals, claude, macos")
+        Component(init, "Init Module", "Python", "12-step bootstrap: Xcode, clone, SSH, brew, globals, claude, macos, canvas config")
         Component(build, "Build Module", "Python", "Three-layer merge pipeline: concat, include, deep merge, replace")
         Component(brew, "Brew Module", "Python", "Homebrew bundle: aggregate Brewfiles, run brew bundle")
-        Component(globals, "Globals Module", "Python", "Runtime installers: nvm, pyenv, npm globals, pip globals")
+        Component(globals, "Globals Module", "Python", "Runtime installers: nvm, pyenv, Claude Code (curl), npm globals, pip globals")
         Component(claude_mod, "Claude Module", "Python", "Build Claude config: mcp.json, CLAUDE.md, API provider scripts")
         Component(check, "Check Module", "Python", "Health probes: git status, brew doctor, stale sessions, disk space")
         Component(display, "Display Module", "Python", "Power profiles: pmset config per hardware, launch agent for display watch")
-        Component(macos_mod, "macOS Module", "Python", "System defaults: Dock, Finder, keyboard, trackpad, screenshots")
+        Component(macos_mod, "macOS Module", "Python", "System defaults: Dock, Finder, keyboard, trackpad, screenshots, private defaults")
         Component(core, "core.py", "Python", "Stable public API for AIDA plugin integration")
         Component(config, "Config", "TOML", "~/.dotfiles/.loadout.toml — user, orgs, versions, paths")
     }
@@ -195,13 +197,13 @@ sequenceDiagram
     LO->>HB: brew bundle (aggregated Brewfiles)
 
     Note over LO: Step 9
-    LO->>NVM: Install Node.js, Python, npm globals, pip globals
+    LO->>NVM: Install Node.js, Python, Claude Code (curl), npm globals, pip globals
 
     Note over LO: Step 10
     LO->>CC: Write mcp.json, CLAUDE.md, provider scripts → ~/.claude/
 
     Note over LO: Step 11
-    LO->>macOS: defaults write (Dock, Finder, keyboard, trackpad, screenshots)
+    LO->>macOS: defaults write (Dock, Finder, keyboard, trackpad, screenshots, private defaults)
 
     Note over LO: Step 12
     LO->>macOS: Install display-watch launch agent (pmset)
