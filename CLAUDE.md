@@ -18,7 +18,7 @@ Merge strategy: shell concatenation, gitconfig `[include]`, JSON deep merge via 
 
 ### Directory Layout
 
-- **bootstrap/** — Installation scripts (`install-base.sh`, `install-user.sh`, `install-devbox.sh`)
+- **bootstrap/** — Installation scripts (`install-base.sh`, `install-user.sh`, `install-devbox.sh`). Manual alternative to `loadout init`.
 - **brewfiles/** — Homebrew bundle files (`Brewfile.base`, `Brewfile.devbox`)
 - **globals/** — Global runtime installers (`globals.base.sh`, `globals.devbox.sh`)
 - **dotfiles/base/** — Core dotfiles (`.zshrc`, `.gitconfig`, `.aliases`)
@@ -26,15 +26,16 @@ Merge strategy: shell concatenation, gitconfig `[include]`, JSON deep merge via 
 - **claude/** — Claude Code config templates and MCP configs
 - **macos/** — System defaults scripts and power management
 - **iterm2/** — iTerm2 Dynamic Profile generator (Python, stdlib only)
+- **docs/** — Setup guide and architecture documentation
 - **test/** — Validation script and CI workflow
 - **webapps/, slack/, canvas/** — Placeholder directories for future configs
 
 ### Key Design Patterns
 
 - **Idempotent scripts** — all `.sh` files use `command -v` guards, check before acting
-- **No symlinks** — files are copied to `~/`; future `loadout build` merges layers
+- **No symlinks** — files are copied to `~/`; `loadout build` merges layers
 - **Overlay hooks** — `~/.zshrc.local`, `~/.zshrc.d/*.zsh` (numeric prefix ordering), `~/.gitconfig.local`, `~/.gitconfig.d/`
-- **State directory** — `~/.loadout/` holds `backups/`, `logs/`, future `manifest.json`
+- **State directory** — `~/.loadout/` holds `backups/`, `logs/`, `manifest.json`
 - **nvm via curl** (not Homebrew), **pyenv via Homebrew**, profile suppression with `PROFILE=/dev/null`
 - **1Password CLI** (`op`) for secrets, SSH via 1Password SSH agent
 - **pmset** for power management (not deprecated systemsetup)
@@ -42,7 +43,16 @@ Merge strategy: shell concatenation, gitconfig `[include]`, JSON deep merge via 
 ## Common Commands
 
 ```bash
-# Bootstrap a new machine
+# Bootstrap a new machine (recommended — see docs/SETUP.md)
+loadout init --user=YOUR_USERNAME --orgs=YOUR_ORG
+
+# Day-to-day
+loadout update                   # Pull repos, rebuild, brew bundle
+loadout upgrade                  # update + brew upgrade
+loadout build                    # Rebuild merged dotfiles
+loadout check                    # Read-only health checks
+
+# Manual bootstrap (alternative to loadout init)
 ./bootstrap/install-base.sh
 ./bootstrap/install-user.sh
 ./bootstrap/install-devbox.sh    # optional
@@ -75,3 +85,8 @@ python3 iterm2/generate-profile.py --name "My Profile" --output ~/Library/Applic
 ### Testing
 
 `test/validate.sh` runs 10 checks — shellcheck, JSON/plist validation, secrets scan, path scan, idempotency checks. CI runs on every push/PR via `.github/workflows/validate.yml`.
+
+## Further Reading
+
+- **[docs/SETUP.md](docs/SETUP.md)** — Step-by-step getting started guide
+- **[docs/architecture/README.md](docs/architecture/README.md)** — C4 diagrams, merge strategies, data flows

@@ -3,6 +3,9 @@
 # install-base.sh — Bootstrap base tools on a fresh macOS machine
 # Installs: Xcode CLI tools, Homebrew, Brewfile.base, global runtimes, macOS defaults
 #
+# Manual alternative to `loadout init`. See docs/SETUP.md for the recommended
+# automated approach.
+#
 
 set -euo pipefail
 

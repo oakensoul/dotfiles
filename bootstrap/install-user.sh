@@ -3,6 +3,9 @@
 # install-user.sh — Install base dotfiles to ~/
 # Creates ~/.loadout/, backs up existing files, copies base configs
 #
+# Manual alternative to `loadout init`. See docs/SETUP.md for the recommended
+# automated approach.
+#
 
 set -euo pipefail
 
