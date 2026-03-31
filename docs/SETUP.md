@@ -33,6 +33,7 @@ Before running the setup, make sure you have:
 - **Apple ID** — Required for installing Xcode Command Line Tools. If you are on a managed machine, your IT department may need to allow this.
 - **GitHub account** — Your dotfiles repos are hosted on GitHub. [Create an account](https://github.com/signup) if you do not have one.
 - **1Password account** (recommended) — Loadout uses the 1Password CLI (`op`) for SSH key management and secrets. You can skip this, but you will need to manage SSH keys manually.
+- **cookiecutter** (optional) — Required if you want to use `loadout scaffold` to generate your private repo. Install it with `pip3 install cookiecutter>=2.0` or use `pip3 install ~/.loadout-cli[scaffold]` when installing loadout.
 
 ### Fork or Clone?
 
@@ -69,9 +70,54 @@ On GitHub, fork this repository to your own account. If you plan to customize th
 
 ### Step 2: Create Your Private Repo
 
-Create a private repository called `dotfiles-private` in your GitHub account. This will hold your personal identity, org-specific configs, and secrets references.
+Your private repo (`dotfiles-private`) holds personal identity, org-specific configs, and secrets references. There are two ways to create it.
 
-> **Note:** If you skip this step, `loadout init` will fail when it tries to clone the missing `dotfiles-private` repo. Either create an empty private repo on GitHub before running init, or use the [manual bootstrap](#manual-bootstrap) approach which only requires the public base layer. You can always create the private repo later and run `loadout build` to merge it in.
+> **Note:** If you skip this step entirely, `loadout init` will fail when it tries to clone the missing `dotfiles-private` repo. Either create the private repo before running init, or use the [manual bootstrap](#manual-bootstrap) approach which only requires the public base layer. You can always create the private repo later and run `loadout build` to merge it in.
+
+#### Recommended: Use `loadout scaffold`
+
+The `loadout scaffold` command generates a properly structured `dotfiles-private` repo using a cookiecutter template. This is the fastest way to get started.
+
+```bash
+# If you installed loadout with scaffold support:
+pip3 install ~/.loadout-cli[scaffold]
+# OR install cookiecutter separately:
+pip3 install cookiecutter>=2.0
+
+# Scaffold your private repo
+loadout scaffold \
+  --user=YOUR_USERNAME \
+  --orgs=YOUR_ORG \
+  --git-name="YOUR_NAME" \
+  --git-email="YOUR_EMAIL" \
+  --create-repo
+```
+
+This command:
+- Creates `~/.dotfiles-private` with the correct directory structure for all configured layers
+- Pre-fills git identity (name and email) for your primary org
+- Optionally creates the GitHub repo and pushes the initial commit (when `--create-repo` is passed)
+
+You can specify multiple orgs, and scaffold will create the directory structure for each:
+
+```bash
+loadout scaffold \
+  --user=YOUR_USERNAME \
+  --orgs=YOUR_ORG --orgs=another-org \
+  --git-name="YOUR_NAME" \
+  --git-email="YOUR_EMAIL"
+```
+
+To preview what will be generated without writing anything:
+
+```bash
+loadout scaffold --user=YOUR_USERNAME --orgs=YOUR_ORG --dry-run
+```
+
+<details>
+<summary><strong>Alternative: Create the private repo manually</strong></summary>
+
+If you prefer full control, create a private repository called `dotfiles-private` in your GitHub account and set up the directory structure yourself.
 
 The expected structure is:
 
@@ -98,6 +144,8 @@ dotfiles-private/
 ```
 
 You can start with just a `dotfiles/orgs/YOUR_ORG/.gitconfig` containing your `[user]` section and build from there.
+
+</details>
 
 ### Step 3: Install Homebrew
 
@@ -165,7 +213,10 @@ After `loadout init` completes, here is what was created and configured on your 
 | Path | What It Is |
 |---|---|
 | `~/.dotfiles/` | Clone of your dotfiles repo (public base layer) |
+| `~/.dotfiles/dotfiles/base/` | Public base dotfiles (`.zshrc`, `.gitconfig`, `.aliases`) |
 | `~/.dotfiles-private/` | Clone of your dotfiles-private repo (private/org layer) |
+| `~/.dotfiles-private/dotfiles/base/` | Private base dotfiles (merged after public base) |
+| `~/.dotfiles-private/dotfiles/orgs/` | Per-org dotfile overlays (highest priority) |
 | `~/.dotfiles/.loadout.toml` | Loadout configuration (your username, active orgs, tool versions) |
 | `~/.dotfiles/build/` | Staging area for merged dotfile output |
 | `~/.dotfiles/backups/` | Timestamped backups of overwritten files |

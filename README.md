@@ -31,15 +31,23 @@ The recommended way to set up a new machine is with the `loadout` CLI:
 # 1. Install Homebrew (if not already installed)
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# 2. Install loadout (not yet on PyPI — install from source)
+# 2. Install loadout with scaffold support (not yet on PyPI — install from source)
 git clone https://github.com/oakensoul/loadout.git ~/.loadout-cli
-pip3 install ~/.loadout-cli
+pip3 install ~/.loadout-cli[scaffold]
 
-# 3. Bootstrap your machine
+# 3. Scaffold your private repo (creates ~/.dotfiles-private with correct structure)
+loadout scaffold \
+  --user=YOUR_USERNAME \
+  --orgs=YOUR_ORG \
+  --git-name="YOUR_NAME" \
+  --git-email="YOUR_EMAIL" \
+  --create-repo
+
+# 4. Bootstrap your machine
 loadout init --user=YOUR_USERNAME --orgs=YOUR_ORG
 ```
 
-This runs a fully automated 13-step bootstrap that clones repos, generates SSH keys, installs packages, builds your dotfiles, and configures macOS defaults.
+Step 3 creates a properly structured `dotfiles-private` repo using a cookiecutter template, pre-fills your git identity, and optionally pushes to GitHub. Step 4 runs a fully automated 13-step bootstrap that clones repos, generates SSH keys, installs packages, builds your dotfiles, and configures macOS defaults.
 
 For the full walkthrough, see the **[Setup Guide](docs/SETUP.md)**.
 
