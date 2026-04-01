@@ -28,6 +28,10 @@ env/
 .vscode/
 *.code-workspace
 
+# Claude Code (local settings and ephemeral state)
+.claude/settings.local.json
+.claude/worktrees/
+
 # Cursor
 .cursor/
 
