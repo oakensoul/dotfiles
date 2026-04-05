@@ -122,6 +122,35 @@ autoload -Uz add-zsh-hook
 add-zsh-hook precmd __loadout_git_check
 
 # ---------------------------------------------------------------------------
+# Terminal title — Org/repo (or Org/repo/worktree) when in git, else dirname
+# ---------------------------------------------------------------------------
+__set_terminal_title() {
+    local title
+    local git_root worktree_root remote_url slug
+
+    git_root="$(git rev-parse --show-toplevel 2>/dev/null)"
+    if [[ -n "$git_root" ]]; then
+        # Extract org/repo from origin remote
+        remote_url="$(git -C "$git_root" remote get-url origin 2>/dev/null)"
+        slug="$(echo "$remote_url" | sed 's|.*github\.com[:/]\(.*\)\.git$|\1|; s|.*github\.com[:/]\(.*\)|\1|')"
+        title="${slug:-${git_root:t}}"
+
+        # Detect worktree: commondir differs from gitdir when in a linked worktree
+        worktree_root="$(git rev-parse --git-common-dir 2>/dev/null)"
+        local git_dir="$(git rev-parse --git-dir 2>/dev/null)"
+        if [[ "$worktree_root" != "$git_dir" && "$worktree_root" != "." ]]; then
+            title="${title}/${git_root:t}"
+        fi
+    else
+        title="${PWD:t}"
+    fi
+
+    printf '\e]0;%s\a' "$title"
+}
+add-zsh-hook chpwd __set_terminal_title
+__set_terminal_title  # set on shell start
+
+# ---------------------------------------------------------------------------
 # Overlay: ~/.zshrc.d/*.zsh (numeric-sorted)
 # ---------------------------------------------------------------------------
 if [[ -d "$HOME/.zshrc.d" ]]; then
