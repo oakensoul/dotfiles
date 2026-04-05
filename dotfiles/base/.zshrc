@@ -4,11 +4,13 @@
 # ---------------------------------------------------------------------------
 # PATH
 # ---------------------------------------------------------------------------
-# Homebrew (auto-detect ARM vs Intel)
-if [[ -d /opt/homebrew ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [[ -d /usr/local/Homebrew ]]; then
-    eval "$(/usr/local/Homebrew/bin/brew shellenv)"
+# Homebrew (auto-detect ARM vs Intel, skip if already configured e.g. devbox)
+if [[ -z "$HOMEBREW_PREFIX" ]]; then
+    if [[ -d /opt/homebrew ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    elif [[ -d /usr/local/Homebrew ]]; then
+        eval "$(/usr/local/Homebrew/bin/brew shellenv)"
+    fi
 fi
 
 # User paths
@@ -30,6 +32,7 @@ setopt HIST_REDUCE_BLANKS
 # ---------------------------------------------------------------------------
 # Completion
 # ---------------------------------------------------------------------------
+fpath=($^fpath(-/N))  # strip non-existent dirs (avoids compinit insecure-files warning)
 autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 
