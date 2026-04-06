@@ -6,7 +6,9 @@
 # ---------------------------------------------------------------------------
 # Homebrew (auto-detect ARM vs Intel, skip if already configured e.g. devbox)
 if [[ -z "$HOMEBREW_PREFIX" ]]; then
-    if [[ -d /opt/homebrew ]]; then
+    if [[ -x "$HOME/.homebrew/bin/brew" ]]; then
+        eval "$("$HOME/.homebrew/bin/brew" shellenv)"
+    elif [[ -d /opt/homebrew ]]; then
         eval "$(/opt/homebrew/bin/brew shellenv)"
     elif [[ -d /usr/local/Homebrew ]]; then
         eval "$(/usr/local/Homebrew/bin/brew shellenv)"
@@ -70,9 +72,9 @@ fi
 # ---------------------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
     # fzf 0.48+ uses built-in shell integration
-    if [[ -f "${HOMEBREW_PREFIX:-/opt/homebrew}/opt/fzf/shell/key-bindings.zsh" ]]; then
-        source "${HOMEBREW_PREFIX:-/opt/homebrew}/opt/fzf/shell/key-bindings.zsh"
-        source "${HOMEBREW_PREFIX:-/opt/homebrew}/opt/fzf/shell/completion.zsh"
+    if [[ -n "$HOMEBREW_PREFIX" && -f "$HOMEBREW_PREFIX/opt/fzf/shell/key-bindings.zsh" ]]; then
+        source "$HOMEBREW_PREFIX/opt/fzf/shell/key-bindings.zsh"
+        source "$HOMEBREW_PREFIX/opt/fzf/shell/completion.zsh"
     fi
 fi
 

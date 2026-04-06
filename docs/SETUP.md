@@ -505,7 +505,7 @@ Then wait for the macOS installer dialog to complete.
 If `brew bundle` fails with permission errors, try:
 
 ```bash
-sudo chown -R "$(whoami)" /opt/homebrew
+sudo chown -R "$(whoami)" "$(brew --prefix)"
 brew doctor
 ```
 
