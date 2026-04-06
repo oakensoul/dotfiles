@@ -1,0 +1,35 @@
+# CLAUDE.md — User Configuration Template
+
+This is a template for your personal `~/CLAUDE.md` file. Copy it to your home directory and customize.
+
+## Identity
+
+<!-- Replace with your information -->
+- Name: YOUR_NAME
+- Role: YOUR_ROLE
+- GitHub: YOUR_GITHUB_USERNAME
+
+## Preferences
+
+<!-- Customize these for your workflow -->
+- Preferred language: English
+- Code style: Follow project conventions
+- Commit messages: Conventional commits
+- Communication style: Concise, direct
+
+## Tools
+
+<!-- List tools and services you use -->
+- Editor: VS Code / Vim
+- Terminal: iTerm2
+- Password manager: 1Password (CLI: `op`)
+
+## MCP Servers
+
+MCP configuration files are located at:
+- `~/.claude/mcp-shared.json` — shared across all projects
+- `~/.claude/mcp-devbox.json` — developer-specific servers
+
+## Notes
+
+<!-- Add any personal notes or context for Claude -->
