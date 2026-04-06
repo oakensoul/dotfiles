@@ -1,6 +1,6 @@
 ---
 name: org-model
-description: Multi-org support — 5 orgs, per-org config surfaces, identity resolution
+description: Multi-org support — per-org config surfaces, identity resolution
 ---
 
 # Multi-Org Model
@@ -35,8 +35,8 @@ Each org can have any/all of:
 ## Org Selection
 
 ### loadout
-- Set at init: `loadout init --orgs=personal --orgs=splash`
-- Stored in `~/.dotfiles/.loadout.toml` → `orgs = ["personal", "splash"]`
+- Set at init: `loadout init --orgs=personal --orgs=work`
+- Stored in `~/.dotfiles/.loadout.toml` → `orgs = ["personal", "work"]`
 - Multiple orgs can be active simultaneously (configs merged in order)
 
 ### canvas
@@ -45,7 +45,7 @@ Each org can have any/all of:
 - Single active org at a time (determines which CLAUDE.md.tmpl to render)
 
 ### devbox
-- Set per-devbox via preset: `devbox create mybox --preset=splash-data`
+- Set per-devbox via preset: `devbox create mybox --preset=work-data`
 - Preset's `mcp_profile` field selects org context
 - Each devbox has exactly one org/preset
 
@@ -56,10 +56,10 @@ Git identity is never in the public base `.gitconfig`. Instead:
 1. Base `.gitconfig` includes `~/.gitconfig.local` and `~/.gitconfig.d/`
 2. `loadout build` writes org configs to `~/.gitconfig.d/{org}.gitconfig`
 3. Each org gitconfig uses `[includeIf "gitdir:~/Developer/{org}/"]` for path-based identity
-4. When you `cd` into `~/Developer/splash/some-repo`, git automatically uses the splash identity
+4. When you `cd` into `~/Developer/{org}/some-repo`, git automatically uses that org's identity
 
 ## Naming Conventions
 
-- Org slugs: kebab-case (e.g., `mythical-journeys`, `sidequest-syndicate`)
-- Flat files: org in filename (e.g., `globals.personal.sh`, `Brewfile.splash`)
-- Multi-file categories: subdirectory per org (e.g., `orgs/personal/`, `orgs/splash/`)
+- Org slugs: kebab-case (e.g., `my-company`, `side-project`)
+- Flat files: org in filename (e.g., `globals.personal.sh`, `Brewfile.work`)
+- Multi-file categories: subdirectory per org (e.g., `orgs/personal/`, `orgs/work/`)

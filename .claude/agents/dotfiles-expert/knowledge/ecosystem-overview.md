@@ -26,7 +26,7 @@ Loadout is a multi-repo macOS machine configuration system with **5 repositories
 ### dotfiles-private — Private Org Layer
 - **Type**: Git config repo (cloned to `~/.dotfiles-private`)
 - **Purpose**: Org-specific secrets, identity, and configuration overrides
-- **Orgs**: personal, splash, mythical-journeys, sidequest-syndicate, equinox-consulting
+- **Orgs**: user-defined (configured via `loadout init --orgs=...`)
 - **Structure**: Each top-level dir has `base/` (shared private) + `orgs/` (per-org) subdirs
 - **Key contents**: Git identity, secrets (op:// refs), Brewfiles, Claude configs, devbox presets, canvas templates
 - **Status**: Active development (feature branch)

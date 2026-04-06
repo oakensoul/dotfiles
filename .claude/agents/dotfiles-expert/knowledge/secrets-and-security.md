@@ -18,10 +18,10 @@ export SECRET="$(op read "op://VaultName/ItemName/field")"
 
 | Tool | Secret Type | Example op:// Path |
 |---|---|---|
-| dotfiles-private globals | GitHub tokens, AWS credentials | `op://Personal/GitHub Token/credential` |
-| dotfiles-private providers | Anthropic API keys | `op://Personal/Anthropic API Key/credential` |
-| dotfiles-private providers | AWS Bedrock credentials | `op://Splash/AWS Bedrock/access_key_id` |
-| loadout init | GitHub token for SSH key registration | `op://Personal/GitHub Token/credential` |
+| dotfiles-private globals | GitHub tokens, AWS credentials | `op://{vault}/GitHub Token/credential` |
+| dotfiles-private providers | Anthropic API keys | `op://{vault}/Anthropic API Key/credential` |
+| dotfiles-private providers | AWS Bedrock credentials | `op://{vault}/AWS Bedrock/access_key_id` |
+| loadout init | GitHub token for SSH key registration | `op://{vault}/GitHub Token/credential` |
 | devbox create | Preset env vars (any op:// refs resolved at create time) | varies per preset |
 
 ### SSH Agent
