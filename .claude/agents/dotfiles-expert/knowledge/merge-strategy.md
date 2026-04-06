@@ -18,7 +18,7 @@ Later layers override or extend earlier layers. The strategy depends on file typ
 | File Pattern | Strategy | Behavior |
 |---|---|---|
 | `.zshrc`, `.aliases`, `.zprofile`, `.zshenv` | **Concat** | Layers appended with separator comments between them |
-| `.gitconfig` | **Git include** | Base written to dest; org configs → `~/.gitconfig.d/{org}`; `[include]` directives appended |
+| `.gitconfig` | **Git include** | Base written to dest; org configs merged → `~/.gitconfig.d/org.gitconfig`; included via `[include] path` |
 | `*.json` | **Deep merge** | Recursive dict merge; later layers win on key conflicts; pretty-printed (indent=2) |
 | `*.yaml`, `*.yml` | **Deep merge** | Recursive dict merge; later layers win on key conflicts |
 | Everything else | **Replace** | Later layer file completely replaces earlier version |
@@ -29,9 +29,9 @@ Later layers override or extend earlier layers. The strategy depends on file typ
 
 | Prefix | Source | Purpose |
 |---|---|---|
-| `10-*` | Org layer | Team/company shell extensions |
-| `50-*` | Devbox layer | Developer tool aliases (docker, gh, npm, lazygit) |
-| `90-*` | Private layer | Personal overrides |
+| `10-*` | Org layer | Team/company shell extensions (convention enforced by `loadout build`) |
+| `50-*` | Devbox layer | Developer tool aliases (convention enforced by `loadout build`) |
+| `90-*` | Private layer | Personal overrides (convention enforced by `loadout build`) |
 
 Loading order in `.zshrc`:
 1. PATH setup (Homebrew auto-detect ARM vs Intel)
@@ -45,11 +45,11 @@ Loading order in `.zshrc`:
 
 ## Git Overlay System
 
-- `~/.gitconfig` — base config (no `[user]` section)
-- `~/.gitconfig.d/` — org-specific configs via `[include]` directives
+- `~/.gitconfig` — base config (no `[user]` section), includes org config via `[include] path = ~/.gitconfig.d/org.gitconfig`
+- `~/.gitconfig.d/org.gitconfig` — single merged file containing all org git configs
 - `~/.gitconfig.local` — personal identity and final overrides (sourced last)
 
-Identity is managed via conditional includes: `[includeIf "gitdir:~/Developer/{org}/"]`
+Identity is managed via conditional includes in the org config: `[includeIf "gitdir:~/Developer/{org}/"]`
 
 ## Atomic Build Process
 

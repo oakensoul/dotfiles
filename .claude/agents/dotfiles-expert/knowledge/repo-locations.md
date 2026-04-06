@@ -11,11 +11,11 @@ All repos live under `~/Developer/oakensoul/`:
 
 | Repo | Local Path | GitHub |
 |---|---|---|
-| loadout | `/Users/oakensoul/Developer/oakensoul/loadout` | oakensoul/loadout |
-| dotfiles | `/Users/oakensoul/Developer/oakensoul/dotfiles` | oakensoul/dotfiles |
-| dotfiles-private | `/Users/oakensoul/Developer/oakensoul/dotfiles-private` | oakensoul/dotfiles-private |
-| devbox | `/Users/oakensoul/Developer/oakensoul/devbox` | oakensoul/devbox |
-| canvas | `/Users/oakensoul/Developer/oakensoul/canvas` | oakensoul/canvas |
+| loadout | `~/Developer/oakensoul/loadout` | oakensoul/loadout |
+| dotfiles | `~/Developer/oakensoul/dotfiles` | oakensoul/dotfiles |
+| dotfiles-private | `~/Developer/oakensoul/dotfiles-private` | oakensoul/dotfiles-private |
+| devbox | `~/Developer/oakensoul/devbox` | oakensoul/devbox |
+| canvas | `~/Developer/oakensoul/canvas` | oakensoul/canvas |
 
 ## Key Files by Repo
 
@@ -38,7 +38,7 @@ All repos live under `~/Developer/oakensoul/`:
 - `bootstrap/install-base.sh` — Phase 1: system foundations
 - `bootstrap/install-user.sh` — Phase 2: user dotfiles
 - `bootstrap/install-devbox.sh` — Phase 3: developer tools
-- `dotfiles/base/.zshrc` — Base shell config (135 lines)
+- `dotfiles/base/.zshrc` — Base shell config
 - `dotfiles/base/.gitconfig` — Base git config (no [user])
 - `dotfiles/base/.aliases` — Shell aliases with modern tool replacements
 - `dotfiles/devbox/50-devbox.zsh` — Dev aliases drop-in
@@ -50,6 +50,11 @@ All repos live under `~/Developer/oakensoul/`:
 - `macos/display-watch.sh` — Hardware detection daemon
 - `claude/statusline.sh` — Claude Code status line formatter
 - `iterm2/generate-profile.py` — iTerm2 dynamic profile generator
+- `claude/base/mcp-shared.json` — Base MCP server config
+- `claude/base/settings.json` — Base Claude Code settings
+- `claude/devbox/mcp-devbox.json` — Devbox MCP server config
+- `claude/CLAUDE.md.template` — Template for merged CLAUDE.md
+- `claude/statusline.sh` — Claude Code status line formatter
 - `test/validate.sh` — 10-check validation suite
 - `docs/architecture/README.md` — Ecosystem architecture (C4 diagrams)
 

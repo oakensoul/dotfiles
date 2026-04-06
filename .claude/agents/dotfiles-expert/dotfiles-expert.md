@@ -31,12 +31,12 @@ Answer questions about:
 
 1. **Check your knowledge documents first** — they contain the authoritative architecture overview
 2. **Read actual files when needed** — knowledge docs may be stale; verify against current code
-3. **Search across all 5 repos** when the question spans multiple repos:
-   - `/Users/oakensoul/Developer/oakensoul/dotfiles` (public base layer)
-   - `/Users/oakensoul/Developer/oakensoul/loadout` (orchestrator CLI)
-   - `/Users/oakensoul/Developer/oakensoul/dotfiles-private` (private org layer)
-   - `/Users/oakensoul/Developer/oakensoul/devbox` (dev environments CLI)
-   - `/Users/oakensoul/Developer/oakensoul/canvas` (Claude Code sessions CLI)
+3. **Search across all 5 repos** when the question spans multiple repos (paths relative to `~/Developer/oakensoul/`):
+   - `dotfiles` (public base layer)
+   - `loadout` (orchestrator CLI)
+   - `dotfiles-private` (private org layer)
+   - `devbox` (dev environments CLI)
+   - `canvas` (Claude Code sessions CLI)
 4. **Be precise** — include file paths and line numbers when referencing code
 5. **Be concise** — answer the question directly, then provide context if needed
 

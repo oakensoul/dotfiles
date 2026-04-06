@@ -39,7 +39,7 @@ description: Where each tool stores config, state, and runtime data on the files
 | `~/.aliases` | loadout build | Merged shell aliases |
 | `~/.gitconfig` | loadout build | Merged git config (no [user] section) |
 | `~/.gitconfig.local` | user (manual) | Personal git identity |
-| `~/.gitconfig.d/` | loadout build | Per-org git configs via [include] |
+| `~/.gitconfig.d/org.gitconfig` | loadout build | Single merged org git config (included by .gitconfig) |
 | `~/.zshrc.d/` | loadout build + globals | Numeric-sorted shell drop-ins |
 | `~/.zshrc.local` | user (manual) | Final private shell overrides |
 
