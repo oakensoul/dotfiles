@@ -7,13 +7,13 @@ description: Multi-org support — 5 orgs, per-org config surfaces, identity res
 
 ## Supported Organizations
 
+Orgs are defined per-user in `~/.dotfiles/.loadout.toml`. Each org has a slug, a GitHub identity, and a description. Example:
+
 | Org Slug | GitHub Identity | Description |
 |---|---|---|
-| `personal` | oakensoul | Personal projects |
-| `splash` | splash-rob | Splash Sports (employer) |
-| `mythical-journeys` | TBD | Side project (game/LARP) |
-| `sidequest-syndicate` | TBD | Side project collective |
-| `equinox-consulting` | TBD | Consulting work |
+| `personal` | {github-user} | Personal projects |
+| `work` | {work-user} | Employer projects |
+| `side-project` | {github-user} | Side project |
 
 ## Per-Org Configuration Surface
 

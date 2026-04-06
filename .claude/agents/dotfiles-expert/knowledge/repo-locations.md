@@ -7,15 +7,15 @@ description: Source code paths and key file locations in each repository
 
 ## Source Repositories
 
-All repos live under `~/Developer/oakensoul/`:
+All repos live under `~/Developer/{github-user}/`:
 
 | Repo | Local Path | GitHub |
 |---|---|---|
-| loadout | `~/Developer/oakensoul/loadout` | oakensoul/loadout |
-| dotfiles | `~/Developer/oakensoul/dotfiles` | oakensoul/dotfiles |
-| dotfiles-private | `~/Developer/oakensoul/dotfiles-private` | oakensoul/dotfiles-private |
-| devbox | `~/Developer/oakensoul/devbox` | oakensoul/devbox |
-| canvas | `~/Developer/oakensoul/canvas` | oakensoul/canvas |
+| loadout | `~/Developer/{github-user}/loadout` | {github-user}/loadout |
+| dotfiles | `~/Developer/{github-user}/dotfiles` | {github-user}/dotfiles |
+| dotfiles-private | `~/Developer/{github-user}/dotfiles-private` | {github-user}/dotfiles-private |
+| devbox | `~/Developer/{github-user}/devbox` | {github-user}/devbox |
+| canvas | `~/Developer/{github-user}/canvas` | {github-user}/canvas |
 
 ## Key Files by Repo
 

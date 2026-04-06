@@ -31,7 +31,7 @@ Answer questions about:
 
 1. **Check your knowledge documents first** — they contain the authoritative architecture overview
 2. **Read actual files when needed** — knowledge docs may be stale; verify against current code
-3. **Search across all 5 repos** when the question spans multiple repos (paths relative to `~/Developer/oakensoul/`):
+3. **Search across all 5 repos** when the question spans multiple repos (paths relative to `~/Developer/{github-user}/`):
    - `dotfiles` (public base layer)
    - `loadout` (orchestrator CLI)
    - `dotfiles-private` (private org layer)
