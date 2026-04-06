@@ -4,11 +4,15 @@
 # ---------------------------------------------------------------------------
 # PATH
 # ---------------------------------------------------------------------------
-# Homebrew (auto-detect ARM vs Intel)
-if [[ -d /opt/homebrew ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [[ -d /usr/local/Homebrew ]]; then
-    eval "$(/usr/local/Homebrew/bin/brew shellenv)"
+# Homebrew (auto-detect ARM vs Intel, skip if already configured e.g. devbox)
+if [[ -z "$HOMEBREW_PREFIX" ]]; then
+    if [[ -x "$HOME/.homebrew/bin/brew" ]]; then
+        eval "$("$HOME/.homebrew/bin/brew" shellenv)"
+    elif [[ -d /opt/homebrew ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    elif [[ -d /usr/local/Homebrew ]]; then
+        eval "$(/usr/local/Homebrew/bin/brew shellenv)"
+    fi
 fi
 
 # User paths
@@ -30,6 +34,7 @@ setopt HIST_REDUCE_BLANKS
 # ---------------------------------------------------------------------------
 # Completion
 # ---------------------------------------------------------------------------
+fpath=($^fpath(-/N))  # strip non-existent dirs (avoids compinit insecure-files warning)
 autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 
@@ -67,9 +72,9 @@ fi
 # ---------------------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
     # fzf 0.48+ uses built-in shell integration
-    if [[ -f "${HOMEBREW_PREFIX:-/opt/homebrew}/opt/fzf/shell/key-bindings.zsh" ]]; then
-        source "${HOMEBREW_PREFIX:-/opt/homebrew}/opt/fzf/shell/key-bindings.zsh"
-        source "${HOMEBREW_PREFIX:-/opt/homebrew}/opt/fzf/shell/completion.zsh"
+    if [[ -n "$HOMEBREW_PREFIX" && -f "$HOMEBREW_PREFIX/opt/fzf/shell/key-bindings.zsh" ]]; then
+        source "$HOMEBREW_PREFIX/opt/fzf/shell/key-bindings.zsh"
+        source "$HOMEBREW_PREFIX/opt/fzf/shell/completion.zsh"
     fi
 fi
 
@@ -117,6 +122,35 @@ __loadout_git_check() {
 }
 autoload -Uz add-zsh-hook
 add-zsh-hook precmd __loadout_git_check
+
+# ---------------------------------------------------------------------------
+# Terminal title — Org/repo (or Org/repo/worktree) when in git, else dirname
+# ---------------------------------------------------------------------------
+__set_terminal_title() {
+    local title
+    local git_root worktree_root remote_url slug
+
+    git_root="$(git rev-parse --show-toplevel 2>/dev/null)"
+    if [[ -n "$git_root" ]]; then
+        # Extract org/repo from origin remote
+        remote_url="$(git -C "$git_root" remote get-url origin 2>/dev/null)"
+        slug="$(echo "$remote_url" | sed 's|.*github\.com[:/]\(.*\)\.git$|\1|; s|.*github\.com[:/]\(.*\)|\1|')"
+        title="${slug:-${git_root:t}}"
+
+        # Detect worktree: commondir differs from gitdir when in a linked worktree
+        worktree_root="$(git rev-parse --git-common-dir 2>/dev/null)"
+        local git_dir="$(git rev-parse --git-dir 2>/dev/null)"
+        if [[ "$worktree_root" != "$git_dir" && "$worktree_root" != "." ]]; then
+            title="${title}/${git_root:t}"
+        fi
+    else
+        title="${PWD:t}"
+    fi
+
+    printf '\e]0;%s\a' "$title"
+}
+add-zsh-hook chpwd __set_terminal_title
+__set_terminal_title  # set on shell start
 
 # ---------------------------------------------------------------------------
 # Overlay: ~/.zshrc.d/*.zsh (numeric-sorted)

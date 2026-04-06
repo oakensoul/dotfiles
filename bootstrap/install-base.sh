@@ -38,7 +38,9 @@ else
     info "Installing Homebrew..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     # Load Homebrew into current session
-    if [[ -d /opt/homebrew ]]; then
+    if [[ -x "$HOME/.homebrew/bin/brew" ]]; then
+        eval "$("$HOME/.homebrew/bin/brew" shellenv)"
+    elif [[ -d /opt/homebrew ]]; then
         eval "$(/opt/homebrew/bin/brew shellenv)"
     elif [[ -d /usr/local/Homebrew ]]; then
         eval "$(/usr/local/Homebrew/bin/brew shellenv)"
