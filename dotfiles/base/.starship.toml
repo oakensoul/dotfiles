@@ -1,7 +1,8 @@
 # ~/.starship.toml — Loadout base Starship prompt (Catppuccin Powerline preset,
 # from `starship preset catppuccin-powerline`, with user@host added up front).
 # Managed by Loadout; .zshrc points STARSHIP_CONFIG here. Needs a Nerd Font
-# (iTerm2 profiles default to MesloLGS-NF).
+# (devbox iTerm2 profiles default to JetBrainsMono NFM; install the host font
+# with `brew install --cask font-jetbrains-mono-nerd-font`).
 
 "$schema" = 'https://starship.rs/config-schema.json'
 

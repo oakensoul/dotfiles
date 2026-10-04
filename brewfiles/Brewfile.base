@@ -20,3 +20,8 @@ cask "1password-cli"
 cask "iterm2"
 cask "rectangle"
 cask "raycast"
+
+# Fonts — Nerd Font for terminal glyphs (Starship powerline/icons, iTerm2
+# profiles default to JetBrainsMono NFM). Renders on the host, so devbox
+# SSH sessions pick it up too.
+cask "font-jetbrains-mono-nerd-font"
