@@ -70,4 +70,23 @@ else
     curl -fsSL https://claude.ai/install.sh | bash
 fi
 
+# ---------------------------------------------------------------------------
+# iTerm2 shell integration
+# ---------------------------------------------------------------------------
+# Fetched directly instead of via iTerm2's install script, which appends a
+# source line to ~/.zshrc — base .zshrc already sources it, and loadout build
+# would overwrite the edit anyway. Re-downloaded on each run to stay current.
+ITERM2_SI="$HOME/.iterm2_shell_integration.zsh"
+if [[ -f "$ITERM2_SI" ]]; then
+    skip "iTerm2 shell integration present — refreshing"
+else
+    install_msg "Installing iTerm2 shell integration..."
+fi
+if curl --proto =https -fsSL https://iterm2.com/shell_integration/zsh -o "$ITERM2_SI.tmp"; then
+    mv "$ITERM2_SI.tmp" "$ITERM2_SI"
+else
+    rm -f "$ITERM2_SI.tmp"
+    info "iTerm2 shell integration download failed — skipping"
+fi
+
 info "globals.base.sh complete"

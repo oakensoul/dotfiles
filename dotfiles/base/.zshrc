@@ -153,6 +153,22 @@ add-zsh-hook chpwd __set_terminal_title
 __set_terminal_title  # set on shell start
 
 # ---------------------------------------------------------------------------
+# Starship prompt config (Catppuccin Powerline + user@host; see ~/.starship.toml)
+# ---------------------------------------------------------------------------
+# Loadout deploys top-level files only, so the config lives at ~/.starship.toml
+# rather than ~/.config/starship.toml. Starship itself is initialised by an overlay.
+[[ -f "$HOME/.starship.toml" ]] && export STARSHIP_CONFIG="$HOME/.starship.toml"
+
+# ---------------------------------------------------------------------------
+# iTerm2 shell integration (script installed by globals.base.sh)
+# ---------------------------------------------------------------------------
+# Not gated on $TERM_PROGRAM: it isn't forwarded over SSH, and remote hosts are
+# the main reason to want this. Enabled inside tmux so `tmux -CC` panes still get
+# command marks, cwd/host tracking and the iTerm2 utilities.
+export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=1
+[[ -f "$HOME/.iterm2_shell_integration.zsh" ]] && source "$HOME/.iterm2_shell_integration.zsh"
+
+# ---------------------------------------------------------------------------
 # Overlay: ~/.zshrc.d/*.zsh (numeric-sorted)
 # ---------------------------------------------------------------------------
 if [[ -d "$HOME/.zshrc.d" ]]; then
